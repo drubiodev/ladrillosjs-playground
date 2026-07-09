@@ -5,8 +5,6 @@ const LADRILLOS_SRC = new URL(
   location.href
 ).href;
 
-console.log("LadrillosJS src:", LADRILLOS_SRC);
-
 let errorMsg = "";
 let activeBlobUrls = [];
 
@@ -73,8 +71,6 @@ function build(files)
     <\/script>
   </body>
 </html>`;
-
-  console.log("Preview doc:", doc);
 
   $refs.frame.srcdoc = doc;
 }
