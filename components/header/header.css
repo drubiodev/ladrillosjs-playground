@@ -51,7 +51,8 @@
  header button.primary {
      background: var(--accent);
      border-color: var(--accent);
-     color: #fff;
+     /* dark text on the orange accent meets WCAG AA (white was 2.83:1) */
+     color: #1c1917;
      font-weight: 600;
  }
 

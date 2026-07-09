@@ -1,8 +1,9 @@
-import * as monaco from "https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/+esm";
 import { EVENTS } from "../../common/events.js";
 import { EXAMPLES, EXAMPLE_NAMES } from "../../common/examples.js";
 
-// The ESM CDN build spins up web workers for language tooling.
+const MONACO_CDN = "https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1";
+
+// The CDN build spins up web workers for language tooling.
 // getWorker is fully self-contained (no outer closure refs) because Monaco
 // invokes it later, outside this module's lexical scope.
 // NOTE: the import keyword is split so Ladrillos' module-import scanner
@@ -21,6 +22,42 @@ self.MonacoEnvironment = {
         return new Worker(url, { type: "module" });
     }
 };
+
+// Monaco is loaded via the AMD "min" build rather than jsDelivr's "/+esm"
+// bundle: "/+esm" inlines the entire editor core into every lazily-imported
+// language chunk (~950 KB each for html/css/js), quadrupling the download.
+// The min build shares one core and loads languages as ~5 KB chunks, and its
+// CSS inlines the codicon font (no cross-origin font 404). Loading happens
+// lazily so the page shell paints before the ~1 MB editor arrives.
+let monaco;
+let monacoPromise;
+function loadMonaco()
+{
+    if (monacoPromise) return monacoPromise;
+    const css = new Promise((resolve) =>
+    {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.dataset.name = "vs/editor/editor.main";
+        link.href = `${MONACO_CDN}/min/vs/editor/editor.main.css`;
+        link.onload = link.onerror = resolve;
+        document.head.appendChild(link);
+    });
+    const api = new Promise((resolve, reject) =>
+    {
+        const loader = document.createElement("script");
+        loader.src = `${MONACO_CDN}/min/vs/loader.js`;
+        loader.onload = () =>
+        {
+            window.require.config({ paths: { vs: `${MONACO_CDN}/min/vs` } });
+            window.require(["vs/editor/editor.main"], () => resolve(window.monaco), reject);
+        };
+        loader.onerror = reject;
+        document.head.appendChild(loader);
+    });
+    monacoPromise = Promise.all([api, css]).then(([m]) => m);
+    return monacoPromise;
+}
 
 // Source of truth for the open files. Each file is a component:
 // its tab name is the custom-element tag, its Monaco model holds the source.
@@ -149,8 +186,9 @@ $listen(EVENTS.FILE_ADD, () => addFile());
 
 // Wait for the template (and $refs) to be ready before mounting Monaco,
 // then render the first example.
-$host.addEventListener("ladrillos:ready", () =>
+$host.addEventListener("ladrillos:ready", async () =>
 {
+    monaco = await loadMonaco();
     editor = monaco.editor.create($refs.editorHost, {
         language: "html", // highlights embedded <script> and <style> too
         theme: "vs-dark",

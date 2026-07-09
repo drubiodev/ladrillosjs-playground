@@ -5,6 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LadrillosJS Playground</title>
+  <meta name="description"
+    content="Interactive playground for LadrillosJS — write web components in plain HTML, CSS, and JavaScript and see them render live." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
   <script type="module">
     import { registerComponents, configure } from "https://cdn.jsdelivr.net/npm/ladrillosjs@latest/dist/index.js";
@@ -160,7 +163,8 @@
 
     footer a {
       color: var(--accent);
-      text-decoration: none;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     /* Loading state */
