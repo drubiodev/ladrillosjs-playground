@@ -161,6 +161,16 @@
       text-decoration: none;
     }
 
+    /* Loading state */
+    body.loading {
+      opacity: 0;
+    }
+
+    body {
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
     @media (max-width: 800px) {
       main {
         grid-template-columns: 1fr;
@@ -174,7 +184,7 @@
   </style>
 </head>
 
-<body>
+<body class="loading">
   <playground-header></playground-header>
 
   <main>
