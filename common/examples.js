@@ -2,13 +2,13 @@
 // files; the first entry is the mounted "root". The header lists them, the
 // editor loads them — both import from here, so examples are easy to add.
 export const EXAMPLES = {
-    Counter: [
-        {
-            name: "demo-counter",
-            code: `<div class="counter">
+  Counter: [
+    {
+      name: "demo-counter",
+      code: `<div class="counter">
   <div class="count">{count}</div>
   <div class="row">
-    <button onclick="count--">−</button>
+    <button onclick="count--">-</button>
     <button onclick="count = 0">reset</button>
     <button onclick="count++">+</button>
   </div>
@@ -28,13 +28,13 @@ export const EXAMPLES = {
   button:hover { background: #f0f2f5; }
   p { color: #65676b; }
 </style>`,
-        },
-    ],
+    },
+  ],
 
-    "Todo list": [
-        {
-            name: "demo-todo",
-            code: `<div class="todo">
+  "Todo list": [
+    {
+      name: "demo-todo",
+      code: `<div class="todo">
   <h2>Todo ({items.length})</h2>
   <form $on:submit.prevent="add()">
     <input $bind="draft" placeholder="What needs doing?" />
@@ -99,13 +99,13 @@ export const EXAMPLES = {
        font-size: 1.2rem; cursor: pointer; margin-left: auto; }
   .empty { color: #9198a1; }
 </style>`,
-        },
-    ],
+    },
+  ],
 
-    "Directives (if / show / for)": [
-        {
-            name: "demo-directives",
-            code: `<div class="demo">
+  "Directives (if / show / for)": [
+    {
+      name: "demo-directives",
+      code: `<div class="demo">
   <section>
     <h3>if / else-if / else</h3>
     <div class="row">
@@ -160,13 +160,13 @@ export const EXAMPLES = {
            background: #fff; cursor: pointer; }
   ul { padding-left: 1.1rem; }
 </style>`,
-        },
-    ],
+    },
+  ],
 
-    "Two-way binding": [
-        {
-            name: "demo-form",
-            code: `<div class="form">
+  "Two-way binding": [
+    {
+      name: "demo-form",
+      code: `<div class="form">
   <h3>Live form binding</h3>
   <label>Name <input $bind="name" placeholder="Ada" /></label>
   <label>Color
@@ -196,13 +196,13 @@ export const EXAMPLES = {
   input, select { padding: .5rem; border: 1px solid #ccd0d5; border-radius: 6px; }
   .preview { font-weight: 800; text-align: center; margin-top: .5rem; }
 </style>`,
-        },
-    ],
+    },
+  ],
 
-    "Props (parent → child)": [
-        {
-            name: "profile-page",
-            code: `<div class="page">
+  "Props (parent → child)": [
+    {
+      name: "profile-page",
+      code: `<div class="page">
   <h2>Team ({people.length})</h2>
   <div class="cards">
     <for each="person in people" key="person.name">
@@ -229,10 +229,10 @@ export const EXAMPLES = {
   h2 { color: #1c1e21; }
   .cards { display: grid; gap: .6rem; }
 </style>`,
-        },
-        {
-            name: "user-card",
-            code: `<div class="card">
+    },
+    {
+      name: "user-card",
+      code: `<div class="card">
   <div class="avatar">{name.charAt(0)}</div>
   <div class="info">
     <strong>{name}</strong>
@@ -259,13 +259,13 @@ export const EXAMPLES = {
   .status.on { color: #2ecc71; }
   .status.off { color: #9198a1; }
 </style>`,
-        },
-    ],
+    },
+  ],
 
-    "Event bus (emit / listen)": [
-        {
-            name: "chat-panel",
-            code: `<div class="chat">
+  "Event bus (emit / listen)": [
+    {
+      name: "chat-panel",
+      code: `<div class="chat">
   <h3>💬 Chat</h3>
   <form $on:submit.prevent="send()">
     <input $bind="draft" placeholder="Type a message…" />
@@ -295,10 +295,10 @@ export const EXAMPLES = {
   button { padding: .5rem .9rem; border: 0; border-radius: 6px;
            background: #ff6b35; color: #fff; cursor: pointer; }
 </style>`,
-        },
-        {
-            name: "message-list",
-            code: `<div class="list">
+    },
+    {
+      name: "message-list",
+      code: `<div class="list">
   <if condition="messages.length === 0">
     <p class="empty">No messages yet — send one above.</p>
   </if>
@@ -328,8 +328,8 @@ export const EXAMPLES = {
   .time { color: #9198a1; font-size: .75rem; margin-right: .5rem; }
   .empty { color: #9198a1; }
 </style>`,
-        },
-    ],
+    },
+  ],
 };
 
 // Ordered list of example names for the picker.
