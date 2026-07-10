@@ -176,6 +176,76 @@ function defaultFileCode(tag)
     ].join("\n");
 }
 
+// HTML void elements never get a closing tag.
+const VOID_TAGS = new Set([
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "param", "source", "track", "wbr",
+]);
+
+// When the user types ">" to finish an opening tag, insert the matching
+// closing tag and leave the caret between them. Handles multi-cursor edits.
+function enableAutoCloseTags(editor)
+{
+    editor.onKeyDown((e) =>
+    {
+        if (e.browserEvent.key !== ">") return;
+
+        const model = editor.getModel();
+        if (!model || model.getLanguageId() !== "html") return;
+
+        const edits = [];
+        const newSelections = [];
+
+        for (const selection of editor.getSelections())
+        {
+            // The ">" isn't in the model yet; account for it when re-placing carets.
+            newSelections.push(
+                new monaco.Selection(
+                    selection.selectionStartLineNumber,
+                    selection.selectionStartColumn + 1,
+                    selection.endLineNumber,
+                    selection.endColumn + 1
+                )
+            );
+
+            const line = model.getValueInRange({
+                startLineNumber: selection.endLineNumber,
+                startColumn: 1,
+                endLineNumber: selection.endLineNumber,
+                endColumn: selection.endColumn,
+            });
+
+            // Match an unclosed opening tag ending right before the caret,
+            // skipping self-closing (`<br/`) and closing (`</div`) tags.
+            const match = line.match(/<([a-zA-Z][\w-]*)(?:\s[^<>]*?)?$/);
+            if (!match) continue;
+
+            const tag = match[1];
+            if (VOID_TAGS.has(tag.toLowerCase())) continue;
+
+            edits.push({
+                range: {
+                    startLineNumber: selection.endLineNumber,
+                    startColumn: selection.endColumn + 1,
+                    endLineNumber: selection.endLineNumber,
+                    endColumn: selection.endColumn + 1,
+                },
+                text: `</${tag}>`,
+                forceMoveMarkers: true,
+            });
+        }
+
+        if (edits.length === 0) return;
+
+        // Let Monaco insert the ">" first, then splice in the closing tags
+        // and drop the carets between the two tags.
+        setTimeout(() =>
+        {
+            editor.executeEdits("auto-close-tag", edits, newSelections);
+        }, 0);
+    });
+}
+
 // React to header + tab-strip actions over the event bus.
 $listen(EVENTS.EXAMPLE_SELECT, (name) => loadExample(name));
 $listen(EVENTS.RUN, () => run());
@@ -207,6 +277,9 @@ $host.addEventListener("ladrillos:ready", async () =>
             useShadows: false,
         },
     });
+
+    // Monaco core doesn't auto-close HTML tags, so wire it up manually.
+    enableAutoCloseTags(editor);
 
     // Debounced live re-run on edit.
     editor.onDidChangeModelContent(() =>
