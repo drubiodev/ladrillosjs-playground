@@ -1,0 +1,168 @@
+<link rel="stylesheet" href="./cheatsheet.css" />
+
+<div class="cheats {open ? 'open' : ''}">
+  <div class="cheats-overlay" onclick="closeSheet()"></div>
+
+  <aside class="cheats-drawer" role="dialog" aria-label="LadrillosJS cheat sheet">
+    <header class="cheats-head">
+      <span class="dot"></span>
+      <strong>LadrillosJS cheat sheet</strong>
+      <a href="https://github.com/drubiodev/LadrillosJS/tree/v2-rc" target="_blank" rel="noreferrer">full docs ↗</a>
+      <button class="cheats-close" onclick="closeSheet()" title="Close (Esc)">
+        ×
+      </button>
+    </header>
+
+    <div class="cheats-body">
+      <section>
+        <h3>A component is one file</h3>
+        <p>
+          Markup + <code>&lt;script&gt;</code> + <code>&lt;style&gt;</code>.
+          Every <code>let</code> is reactive — reassign it and the DOM updates.
+        </p>
+        <pre $no:bind><code>&lt;h2&gt;{count}&lt;/h2&gt;
+&lt;button onclick="count++"&gt;+1&lt;/button&gt;
+
+&lt;script&gt;
+  let count = 0;
+&lt;/script&gt;
+
+&lt;style&gt;
+  h2 { color: #ff6b35; }
+&lt;/style&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Interpolation</h3>
+        <p>Braces take any JS expression.</p>
+        <pre $no:bind><code>&lt;p&gt;{user.name}&lt;/p&gt;
+&lt;p&gt;{items.length} items&lt;/p&gt;
+&lt;p&gt;{age &gt;= 18 ? 'adult' : 'minor'}&lt;/p&gt;
+
+&lt;!-- works in attributes too --&gt;
+&lt;li class="{item.done ? 'done' : ''}"&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Reactivity gotcha: arrays &amp; objects</h3>
+        <p>Reassign — don't mutate in place.</p>
+        <pre $no:bind><code>items = [...items, newItem];        // ✅
+items = items.filter(i =&gt; i.id !== id); // ✅
+</code></pre>
+      </section>
+
+      <section>
+        <h3>Conditionals</h3>
+        <pre $no:bind><code>&lt;if condition="status === 'loading'"&gt;⏳&lt;/if&gt;
+&lt;else-if condition="status === 'error'"&gt;💥&lt;/else-if&gt;
+&lt;else&gt;✅&lt;/else&gt;
+
+&lt;!-- toggle CSS display, keep the DOM --&gt;
+&lt;show condition="open"&gt;…&lt;/show&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Lists</h3>
+        <pre $no:bind><code>&lt;for each="fruit in fruits"&gt;
+  &lt;li&gt;{fruit}&lt;/li&gt;
+&lt;/for&gt;
+
+&lt;!-- with index + key --&gt;
+&lt;for each="(item, i) in items" key="item.id"&gt;
+  &lt;li&gt;#{i + 1} — {item.name}&lt;/li&gt;
+&lt;/for&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Events</h3>
+        <p>
+          Plain <code>onclick</code> etc. run in component scope. Use
+          <code>$on:</code> for modifiers.
+        </p>
+        <pre $no:bind><code>&lt;button onclick="count++"&gt;+&lt;/button&gt;
+&lt;button onclick="save(item.id)"&gt;Save&lt;/button&gt;
+
+&lt;form $on:submit.prevent="add()"&gt;…&lt;/form&gt;
+&lt;input $on:keyup.enter="search()" /&gt;
+&lt;div $on:click.self="closeModal()"&gt;…&lt;/div&gt;</code></pre>
+        <p class="mods">
+          Modifiers: <code>.prevent</code> <code>.stop</code>
+          <code>.self</code> <code>.once</code> <code>.capture</code>
+          <code>.passive</code> <code>.enter</code> <code>.escape</code>
+          <code>.ctrl</code> <code>.shift</code> <code>.alt</code>
+          <code>.meta</code>
+        </p>
+      </section>
+
+      <section>
+        <h3>Two-way binding</h3>
+        <pre $no:bind><code>&lt;input $bind="name" /&gt;
+&lt;textarea $bind="bio"&gt;&lt;/textarea&gt;
+&lt;select $bind="color"&gt;…&lt;/select&gt;
+&lt;input type="range" $bind="size" /&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Element refs</h3>
+        <pre $no:bind><code>&lt;input $ref="inputEl" /&gt;
+
+&lt;script&gt;
+  function focusIt() {
+    $refs.inputEl.focus();
+  }
+&lt;/script&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Props (parent → child)</h3>
+        <p>
+          Attributes on the tag override the child's
+          <code>let</code> defaults.
+        </p>
+        <pre $no:bind><code>&lt;!-- parent --&gt;
+&lt;user-card name="{person.name}" role="Engineer"&gt;
+&lt;/user-card&gt;
+
+&lt;!-- child (user-card) --&gt;
+&lt;strong&gt;{name}&lt;/strong&gt; &lt;em&gt;{role}&lt;/em&gt;
+&lt;script&gt;
+  let name = "Unknown"; // overridden by attribute
+  let role = "—";
+&lt;/script&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Event bus (any component ↔ any component)</h3>
+        <pre $no:bind><code>// sender
+$emit("chat:message", { text: "hi" });
+
+// receiver
+$listen("chat:message", (data) =&gt; {
+  messages = [...messages, data];
+});</code></pre>
+      </section>
+
+      <section>
+        <h3>Literal braces</h3>
+        <p>
+          <code>$no:bind</code> skips interpolation inside an element (this
+          cheat sheet uses it!).
+        </p>
+        <pre $no:bind><code>&lt;code $no:bind&gt;{not interpolated}&lt;/code&gt;</code></pre>
+      </section>
+
+      <section>
+        <h3>Registering components</h3>
+        <p>How the playground wires files to tags — new tabs you add on the left are registered the same way.</p>
+        <pre $no:bind><code>import { registerComponents } from "ladrillosjs";
+
+await registerComponents([
+  { name: "user-card", path: "./user-card.html" },
+]);
+// then use &lt;user-card&gt;&lt;/user-card&gt; anywhere</code></pre>
+      </section>
+    </div>
+  </aside>
+</div>
+
+<script src="./cheatsheet.js" type="module"></script>

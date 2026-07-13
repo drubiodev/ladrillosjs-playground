@@ -3,6 +3,9 @@ export const EVENTS = {
     EXAMPLE_SELECT: "repl:example-select",
     RUN: "repl:run",
 
+    // header → cheatsheet (slide the syntax reference open/closed)
+    CHEATSHEET_TOGGLE: "repl:cheatsheet-toggle",
+
     // editor → tabs (current file list + which one is active)
     FILES_CHANGED: "repl:files-changed",
 

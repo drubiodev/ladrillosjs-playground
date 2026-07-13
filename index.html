@@ -10,12 +10,13 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
   <script type="module">
-    import { registerComponents, configure } from "https://cdn.jsdelivr.net/npm/ladrillosjs@2.0.0-beta.11/dist/index.js";
+    import { registerComponents, configure } from "https://cdn.jsdelivr.net/npm/ladrillosjs@2.0.0-beta.11.1/dist/index.js";
     await registerComponents([
       { name: "playground-header", path: "./components/header", useShadowDOM: false },
       { name: "playground-tabs", path: "./components/tabs", useShadowDOM: false },
       { name: "playground-editor", path: "./components/editor", useShadowDOM: false },
       { name: "playground-preview", path: "./components/preview", useShadowDOM: false },
+      { name: "playground-cheatsheet", path: "./components/cheatsheet", useShadowDOM: false },
     ]);
 
     document.body.classList.remove("loading");
@@ -203,6 +204,8 @@
       <playground-preview></playground-preview>
     </section>
   </main>
+
+  <playground-cheatsheet></playground-cheatsheet>
 
   <footer>
     Edit the files on the left — the preview updates live. ·

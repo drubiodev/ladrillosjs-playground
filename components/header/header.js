@@ -15,3 +15,8 @@ function run()
 {
     $emit(EVENTS.RUN);
 }
+
+function toggleCheatsheet()
+{
+    $emit(EVENTS.CHEATSHEET_TOGGLE);
+}
