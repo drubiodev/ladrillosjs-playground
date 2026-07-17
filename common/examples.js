@@ -330,6 +330,13 @@ export const EXAMPLES = {
 </style>`,
     },
   ],
+
+  Blank: [
+    {
+      name: "my-component",
+      code: "",
+    },
+  ],
 };
 
 // Ordered list of example names for the picker.
