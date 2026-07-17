@@ -1,7 +1,15 @@
 <link rel="stylesheet" href="./preview.css" />
 
-<div class="pane-head"><span class="dot"></span> Preview</div>
-<div class="preview-wrap">
+<div class="pane-head">
+    <span class="dot"></span>
+    <span>Preview</span>
+    <span class="preview-head-spacer"></span>
+    <button class="preview-theme-toggle {isDark ? 'dark' : ''}" type="button" role="switch" aria-checked="{isDark}"
+        aria-label="Toggle preview color mode" title="Toggle preview color mode" onclick="toggleTheme()">
+        <span class="preview-theme-thumb" aria-hidden="true">{isDark ? '☾' : '☼'}</span>
+    </button>
+</div>
+<div class="preview-wrap {isDark ? 'dark' : ''}">
     <iframe $ref="frame" title="preview" sandbox="allow-scripts allow-same-origin allow-forms allow-modals"></iframe>
     <pre class="preview-error {errorMsg ? 'show' : ''}">{errorMsg}</pre>
 </div>

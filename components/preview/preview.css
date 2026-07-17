@@ -10,6 +10,11 @@ playground-preview {
     position: relative;
     background: #fff;
     min-height: 0;
+    transition: background-color 0.2s ease;
+}
+
+.preview-wrap.dark {
+    background: #1a1a1a;
 }
 
 .preview-wrap iframe {
@@ -17,6 +22,68 @@ playground-preview {
     width: 100%;
     height: 100%;
     background: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.preview-wrap.dark iframe {
+    background: #1a1a1a;
+}
+
+.preview-head-spacer {
+    flex: 1;
+}
+
+.preview-theme-toggle {
+    position: relative;
+    width: 48px;
+    height: 24px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid #a8adb4;
+    border-radius: 12px;
+    background: #f4f5f6;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.preview-theme-toggle.dark {
+    border-color: #555b63;
+    background: #30343a;
+}
+
+.preview-theme-toggle:hover {
+    border-color: var(--muted);
+}
+
+.preview-theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.preview-theme-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    color: #626870;
+    font-family: Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.preview-theme-toggle.dark .preview-theme-thumb {
+    background: #1a1a1a;
+    color: #e6edf3;
+    transform: translateX(24px);
 }
 
 .preview-error {
