@@ -24,7 +24,7 @@ export const EXAMPLES = {
   .count { font-size: 4rem; font-weight: 800; color: #ff6b35; }
   .row { display: flex; gap: .5rem; justify-content: center; margin: 1rem 0; }
   button { padding: .5rem 1rem; border-radius: 8px; border: 1px solid #ccc;
-           background: #fff; cursor: pointer; font-size: 1rem; }
+           background: #fff; color: #1a1a1a; cursor: pointer; font-size: 1rem; }
   button:hover { background: #f0f2f5; }
   p { color: #65676b; }
 </style>`,
@@ -157,7 +157,7 @@ export const EXAMPLES = {
   h3 { margin: 0 0 .5rem; color: #1c1e21; }
   .row { display: flex; gap: .5rem; }
   button { padding: .35rem .7rem; border: 1px solid #ccd0d5; border-radius: 6px;
-           background: #fff; cursor: pointer; }
+           background: #fff; color: #1a1a1a; cursor: pointer; }
   ul { padding-left: 1.1rem; }
 </style>`,
     },
