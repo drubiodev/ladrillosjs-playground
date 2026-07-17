@@ -2,6 +2,9 @@ import { EVENTS } from "../../common/events.js";
 import { EXAMPLES, EXAMPLE_NAMES } from "../../common/examples.js";
 
 const MONACO_CDN = "https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1";
+const BLANK_EXAMPLE_NAME = "Blank";
+const BLANK_STORAGE_KEY = "ladrillos-playground:blank-files";
+const COMPONENT_TAG_PATTERN = /^[a-z][a-z0-9]*-[a-z0-9-]*$/;
 
 // The CDN build spins up web workers for language tooling.
 // getWorker is fully self-contained (no outer closure refs) because Monaco
@@ -66,10 +69,61 @@ let files = [];
 let activeIndex = 0;
 let newFileSeq = 0;
 let debounceTimer;
+let activeExample;
 
 function makeFile(tag, code)
 {
     return { tag, model: monaco.editor.createModel(code, "html") };
+}
+
+function loadBlankFiles()
+{
+    try
+    {
+        const saved = JSON.parse(localStorage.getItem(BLANK_STORAGE_KEY));
+        const tags = new Set();
+        if (
+            Array.isArray(saved) &&
+            saved.length > 0 &&
+            saved.every((file) =>
+                file &&
+                typeof file.tag === "string" &&
+                COMPONENT_TAG_PATTERN.test(file.tag) &&
+                !tags.has(file.tag) &&
+                tags.add(file.tag) &&
+                typeof file.code === "string"
+            )
+        )
+        {
+            return saved;
+        }
+    }
+    catch
+    {
+        // Fall back to the built-in Blank example when storage is unavailable.
+    }
+
+    return EXAMPLES[BLANK_EXAMPLE_NAME];
+}
+
+function saveBlankFiles()
+{
+    if (activeExample !== BLANK_EXAMPLE_NAME || files.length === 0) return;
+
+    try
+    {
+        localStorage.setItem(
+            BLANK_STORAGE_KEY,
+            JSON.stringify(files.map((file) => ({
+                tag: file.tag,
+                code: file.model.getValue(),
+            })))
+        );
+    }
+    catch
+    {
+        // Editing still works when storage is unavailable.
+    }
 }
 
 // Tell the tab strip about the current files + selection.
@@ -93,7 +147,11 @@ function run()
 function loadExample(name)
 {
     for (const f of files) f.model.dispose();
-    files = EXAMPLES[name].map((f) => makeFile(f.name, f.code));
+    activeExample = name;
+    const exampleFiles = name === BLANK_EXAMPLE_NAME
+        ? loadBlankFiles()
+        : EXAMPLES[name];
+    files = exampleFiles.map((f) => makeFile(f.name ?? f.tag, f.code));
     activeIndex = 0;
     editor.setModel(files[0].model);
     emitTabs();
@@ -113,6 +171,7 @@ function addFile()
     const tag = uniqueTag("my-component");
     files = [...files, makeFile(tag, defaultFileCode(tag))];
     selectFile(files.length - 1);
+    saveBlankFiles();
     run();
 }
 
@@ -124,6 +183,7 @@ function removeFile(i)
     activeIndex = Math.min(activeIndex, files.length - 1);
     editor.setModel(files[activeIndex].model);
     emitTabs();
+    saveBlankFiles();
     run();
 }
 
@@ -137,7 +197,7 @@ function renameFile(i)
         ) || ""
     ).trim();
     if (!next || next === current) return;
-    if (!/^[a-z][a-z0-9]*-[a-z0-9-]*$/.test(next))
+    if (!COMPONENT_TAG_PATTERN.test(next))
     {
         $emit(
             EVENTS.PREVIEW_ERROR,
@@ -152,6 +212,7 @@ function renameFile(i)
     }
     files[i].tag = next;
     emitTabs();
+    saveBlankFiles();
     run();
 }
 
@@ -284,6 +345,7 @@ $host.addEventListener("ladrillos:ready", async () =>
     // Debounced live re-run on edit.
     editor.onDidChangeModelContent(() =>
     {
+        saveBlankFiles();
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(run, 400);
     });

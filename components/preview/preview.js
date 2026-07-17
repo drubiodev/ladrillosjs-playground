@@ -4,10 +4,35 @@ const LADRILLOS_SRC = new URL(
   "https://cdn.jsdelivr.net/npm/ladrillosjs@latest/dist/index.js",
   location.href
 ).href;
+const THEME_STORAGE_KEY = "ladrillos-playground:preview-theme";
 
 let errorMsg = "";
 let activeBlobUrls = [];
-let isDark = false;
+let isDark = loadTheme() === "dark";
+
+function loadTheme()
+{
+  try
+  {
+    return localStorage.getItem(THEME_STORAGE_KEY);
+  }
+  catch
+  {
+    return null;
+  }
+}
+
+function saveTheme()
+{
+  try
+  {
+    localStorage.setItem(THEME_STORAGE_KEY, isDark ? "dark" : "light");
+  }
+  catch
+  {
+    // The preview still works when storage is unavailable.
+  }
+}
 
 function getTheme()
 {
@@ -31,6 +56,7 @@ function applyThemeToFrame()
 function toggleTheme()
 {
   isDark = !isDark;
+  saveTheme();
   applyThemeToFrame();
 }
 
